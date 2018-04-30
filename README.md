@@ -5,6 +5,11 @@
 A quick example showing how to utilize Ansible to automate the creation of dynamic ip and port style NAT policies in PANOS.
 
 Ansible version: 2.4.2.0
+
+Ansible PANOS module reference:
+- panos_object: https://docs.ansible.com/ansible/2.4/panos_object_module.html
+- panos_nat_rule: https://docs.ansible.com/ansible/2.4/panos_nat_rule_module.html
+
 # Installation
 
 This assumes that you are using Linux or a Mac and you have Git already installed.
