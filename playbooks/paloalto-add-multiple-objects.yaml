@@ -1,0 +1,44 @@
+---
+# Use this playbook to create dynamic ip and port based NAT policies in PANOS.
+#
+# This playbook will create the source network IP address objects, the translated
+# address objects, and the DIPP NAT policies.
+#
+- hosts: pa
+  connection: local
+
+  tasks:
+  - name: Add 4.1.1.0/24 IP External Address Objects
+    panos_object:
+      ip_address: "172.16.85.100"
+      password: "{{ api_key }}"
+      addressobject: "ip-4.1.1.{{ item }}"
+      address: "4.1.1.{{ item }}/32"
+      operation: "add"
+    with_sequence: start=5 end=10 stride=1
+
+  - name: Add 10.252.0/24 Internal Network Address Objects
+    panos_object:
+      ip_address: "172.16.85.100"
+      password: "{{ api_key }}"
+      addressobject: "obj-10.252.{{ item }}.0"
+      address: "10.252.{{ item }}.0/24"
+      operation: add
+    with_sequence: start=5 end=10 stride=1
+
+  - name: Add NAT Objects
+    panos_nat_rule:
+      ip_address: "172.16.85.100"
+      password: "{{ api_key }}"
+      rule_name: "NAT obj-10.252.{{ item }}.0"
+      source_zone: ["inside"]
+      destination_zone: "outside"
+      source_ip: ["obj-10.252.{{ item }}.0"]
+      destination_ip: ["any"]
+      service: "any"
+      snat_type: "dynamic-ip-and-port"
+      snat_address_type: "translated-address"
+      snat_dynamic_address: "ip-4.1.1.{{ item }}"
+      operation: 'add'
+      commit: false
+    with_sequence: start=5 end=10 stride=1

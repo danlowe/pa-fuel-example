@@ -1,0 +1,3 @@
+# Failed plays
+playbooks/*.retry
+.DS_Store
